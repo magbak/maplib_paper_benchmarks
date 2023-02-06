@@ -1,0 +1,45 @@
+PREFIX rr: <http://www.w3.org/ns/r2rml#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX rev: <http://purl.org/stuff/rev#>
+PREFIX gtfs: <http://vocab.gtfs.org/terms#>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX rml: <http://semweb.mmlab.be/ns/rml#>
+PREFIX ql: <http://semweb.mmlab.be/ns/ql#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX fx:  <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz: <http://sparql.xyz/facade-x/data/>
+
+INSERT {
+	# stops
+    ?stop_id_iri a gtfs:Stop ;
+     gtfs:code ?stop_code ;
+     dct:identifier ?stop_id ;
+     foaf:name ?stop_name ;
+     dct:description ?stop_desc ;
+     geo:lat ?stop_lat_lt ;
+     geo:long ?stop_lon_lt ;
+     gtfs:zone ?zone_id ;
+     foaf:page ?stop_url_iri ;
+     gtfs:locationType ?location_type_iri ;
+     gtfs:timeZone ?stop_timezone ;
+     gtfs:wheelchairAccessible ?wheelchair_boarding_iri ;
+	 gtfs:parentStation ?parent_station_iri
+	 .
+} WHERE {
+	# stops
+	SERVICE <x-sparql-anything:location=/home/magbak/Documents/gtfs/result/datasets/csv/50/STOPS.csv,slice=true,csv.headers=true,strategy=1> {
+        [] xyz:stop_code ?stop_code ; xyz:stop_id ?stop_id ; xyz:stop_name ?stop_name ; xyz:stop_desc ?stop_desc ; xyz:stop_lat ?stop_lat ; xyz:stop_lon ?stop_lon ; xyz:zone_id ?zone_id ; xyz:stop_url ?stop_url ; xyz:location_type ?location_type ; xyz:stop_timezone ?stop_timezone ; xyz:wheelchair_boarding ?wheelchair_boarding ; xyz:parent_station ?parent_station .
+		BIND ( fx:entity ( ?stop_url ) AS ?stop_url_iri ) .
+		BIND ( fx:entity ( "http://transport.linkeddata.es/resource/LocationType/", ?location_type ) AS ?location_type_iri ) .
+ 		BIND ( fx:entity ( "http://transport.linkeddata.es/resource/WheelchairBoardingStatus/", ?wheelchair_boarding ) AS ?wheelchair_boarding_iri ) .
+		BIND ( xsd:double ( ?stop_lat ) AS ?stop_lat_lt ) .
+		BIND ( xsd:double ( ?stop_lon ) AS ?stop_lon_lt ) .
+		BIND ( fx:entity( "http://transport.linkeddata.es/madrid/metro/stops/", ?parent_station ) AS ?parent_station_iri ) .
+		BIND ( fx:entity( "http://transport.linkeddata.es/madrid/metro/stops/", ?stop_id ) AS ?stop_id_iri ) .
+	}
+}

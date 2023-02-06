@@ -1,0 +1,36 @@
+PREFIX rr: <http://www.w3.org/ns/r2rml#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX rev: <http://purl.org/stuff/rev#>
+PREFIX gtfs: <http://vocab.gtfs.org/terms#>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX rml: <http://semweb.mmlab.be/ns/rml#>
+PREFIX ql: <http://semweb.mmlab.be/ns/ql#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX fx:  <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz: <http://sparql.xyz/facade-x/data/>
+
+INSERT {
+	# services2
+	?service_id_iri a gtfs:Service ;
+	  gtfs:serviceRule ?calendar_date_rules_iri ; # service2
+	.
+	# calendar_date_rule
+	?calendar_date_rules_iri a gtfs:CalendarDateRule ;
+      dct:date ?date_lt ;
+      gtfs:dateAddition ?exception_type_lt
+	 .
+} WHERE {
+	# service2, calendar_date_rules
+	SERVICE <x-sparql-anything:location=/home/magbak/Documents/gtfs/result/datasets/csv/50/CALENDAR_DATES.csv,slice=true,csv.headers=true,strategy=1> {
+		[] xyz:service_id ?service_id ; xyz:date ?date ; xyz:exception_type ?exception_type .
+		BIND( fx:entity("http://transport.linkeddata.es/madrid/metro/calendar_date_rule/", ?service_id, "-", ?date ) AS ?calendar_date_rules_iri ) .
+		BIND( xsd:date( ?date ) AS ?date_lt ) .
+		BIND( xsd:boolean( ?exception_type ) AS ?exception_type_lt ) .
+		BIND ( fx:entity( "http://transport.linkeddata.es/madrid/metro/services/", ?service_id ) AS ?service_id_iri ) .
+	}
+}

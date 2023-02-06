@@ -1,0 +1,35 @@
+PREFIX rr: <http://www.w3.org/ns/r2rml#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX rev: <http://purl.org/stuff/rev#>
+PREFIX gtfs: <http://vocab.gtfs.org/terms#>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX rml: <http://semweb.mmlab.be/ns/rml#>
+PREFIX ql: <http://semweb.mmlab.be/ns/ql#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX fx:  <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz: <http://sparql.xyz/facade-x/data/>
+
+INSERT {
+	# agency
+	?agency_id_iri a gtfs:Agency ;
+     foaf:page ?agency_url_iri ;
+     foaf:name ?agency_name ;
+     gtfs:timeZone ?agency_timezone ;
+     dct:language ?agency_lang ;
+     foaf:phone ?agency_phone ;
+     gtfs:fareUrl ?agency_fare_url_iri
+	 .
+} WHERE {
+	# agency
+	SERVICE <x-sparql-anything:location=/home/magbak/Documents/gtfs/result/datasets/csv/50/AGENCY.csv,slice=true,csv.headers=true,strategy=1> {
+		[] xyz:agency_id ?agency_id ; xyz:agency_url ?agency_url ; xyz:agency_fare_url ?agency_fare_url ; xyz:agency_name ?agency_name ; xyz:agency_timezone ?agency_timezone ; xyz:agency_lang ?agency_lang ; xyz:agency_phone ?agency_phone .
+		BIND (fx:entity (?agency_url) AS ?agency_url_iri ) .
+		BIND (fx:entity (?agency_fare_url) AS ?agency_fare_url_iri ) .
+		BIND ( fx:entity( "http://transport.linkeddata.es/madrid/agency/", ?agency_id ) AS ?agency_id_iri ) .
+	}
+}

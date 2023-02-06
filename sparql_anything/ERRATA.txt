@@ -1,0 +1,7 @@
+# services1, services2
+?service_id_iri a gtfs:Service ;
+  gtfs:serviceRule ?calendar_date_rules_iri ; # service1
+  gtfs:serviceRule ?calendar_rules_iri # service2
+.
+
+1 and 2 are mixed?

@@ -1,0 +1,25 @@
+Maplib:
+# 15 not supported
+# 7 crashes
+# 10 not supported yet
+
+#Scaling 10: query 8, 12 and 13 crashes
+#Scaling 50: query 9, 17 crashes
+At scaling 500 we run out of memory.
+
+Morph KGC RDFLIB:
+At scaling 5:
+#Query 14 takes well over 2 minutes
+#Query 17 takes well over 2 minutes
+#Query 10 does not parse duration
+#Query 7 takes well over 2 minutes
+#Query 12 takes well over 2 minutes
+#Query 8 takes well over 2 minutes
+
+Morph KGC Oxigraph:
+#Scaling 10: 13 runs out of memory
+#Scaling 50: uses over an hour to materialize
+
+SPARQL Anything:
+- Ran out of heap space on 50 scale case.
+- Python ran out of memory q9 at scale 10.

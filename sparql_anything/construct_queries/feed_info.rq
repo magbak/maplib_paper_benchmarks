@@ -1,0 +1,37 @@
+PREFIX rr: <http://www.w3.org/ns/r2rml#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX rev: <http://purl.org/stuff/rev#>
+PREFIX gtfs: <http://vocab.gtfs.org/terms#>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX rml: <http://semweb.mmlab.be/ns/rml#>
+PREFIX ql: <http://semweb.mmlab.be/ns/ql#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX fx:  <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz: <http://sparql.xyz/facade-x/data/>
+
+INSERT {
+	 # feed
+     ?feed_publisher_name_iri a gtfs:Feed ;
+      dct:publisher ?feed_publisher_name ;
+      foaf:page ?feed_publisher_url_iri ;
+      dct:language ?feed_lang ;
+      schema:startDate ?feed_start_date_lt ;
+      schema:endDate ?feed_end_date ;
+      schema:version ?feed_version
+	 .
+
+} WHERE {
+	# feed
+	SERVICE <x-sparql-anything:location=/home/magbak/Documents/gtfs/result/datasets/csv/50/FEED_INFO.csv,slice=true,csv.headers=true,strategy=1> {
+		[] xyz:feed_publisher_name ?feed_publisher_name ; xyz:feed_publisher_url ?feed_publisher_url ; xyz:feed_lang ?feed_lang ; xyz:feed_start_date ?feed_start_date ; xyz:feed_end_date ?feed_end_date ; xyz:feed_version ?feed_version .
+		BIND (fx:entity(?feed_publisher_url) AS ?feed_publisher_url_iri ) .
+		BIND (xsd:date(?feed_start_date) AS ?feed_start_date_lt ) .
+		BIND (xsd:date(?feed_end_date) AS ?feed_end_date_lt ) .
+		BIND (fx:entity( "http://transport.linkeddata.es/madrid/metro/feed/", ?feed_publisher_name) AS ?feed_publisher_name_iri ) .
+	}
+}

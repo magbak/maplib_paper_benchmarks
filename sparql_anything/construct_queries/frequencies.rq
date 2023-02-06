@@ -1,0 +1,35 @@
+PREFIX rr: <http://www.w3.org/ns/r2rml#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX rev: <http://purl.org/stuff/rev#>
+PREFIX gtfs: <http://vocab.gtfs.org/terms#>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX rml: <http://semweb.mmlab.be/ns/rml#>
+PREFIX ql: <http://semweb.mmlab.be/ns/ql#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX fx:  <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz: <http://sparql.xyz/facade-x/data/>
+
+INSERT {
+	 # frequency
+     ?trip_frequency_iri a gtfs:Frequency ;
+      gtfs:startTime ?start_time ;
+      gtfs:endTime ?end_time ;
+      gtfs:headwaySeconds ?headway_secs_lt ;
+      gtfs:exactTimes ?exact_times_lt ;
+      gtfs:trip ?trip_id_iri
+	  .
+} WHERE {
+	# frequencies
+	SERVICE <x-sparql-anything:location=/home/magbak/Documents/gtfs/result/datasets/csv/50/FREQUENCIES.csv,slice=true,csv.headers=true,strategy=1> {
+		[] xyz:trip_id ?trip_id ; xyz:start_time ?start_time ; xyz:end_time ?end_time ; xyz:headway_secs ?headway_secs ; xyz:exact_times ?exact_times .
+		BIND (xsd:integer(?headway_secs) AS ?headway_secs_lt ) .
+		BIND (xsd:boolean(?exact_times) AS ?exact_times_lt ) .
+		BIND ( fx:entity("http://transport.linkeddata.es/madrid/metro/frequency/",?trip_id,"-",?start_time ) AS ?trip_frequency_iri ) .
+		BIND ( fx:entity( "http://transport.linkeddata.es/madrid/metro/trips/", ?trip_id ) AS ?trip_id_iri ) .
+	}
+}

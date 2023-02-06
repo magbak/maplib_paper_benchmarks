@@ -1,0 +1,37 @@
+PREFIX rr: <http://www.w3.org/ns/r2rml#>
+PREFIX foaf: <http://xmlns.com/foaf/0.1/>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dc: <http://purl.org/dc/elements/1.1/>
+PREFIX rev: <http://purl.org/stuff/rev#>
+PREFIX gtfs: <http://vocab.gtfs.org/terms#>
+PREFIX geo: <http://www.w3.org/2003/01/geo/wgs84_pos#>
+PREFIX schema: <http://schema.org/>
+PREFIX dct: <http://purl.org/dc/terms/>
+PREFIX rml: <http://semweb.mmlab.be/ns/rml#>
+PREFIX ql: <http://semweb.mmlab.be/ns/ql#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX fx:  <http://sparql.xyz/facade-x/ns/>
+PREFIX xyz: <http://sparql.xyz/facade-x/data/>
+
+INSERT {
+	 # shapes
+	 ?shape_id_iri a gtfs:Shape ;
+	  gtfs:shapePoint ?shape_pt_iri
+	  .
+	 ?shape_pt_iri a gtfs:ShapePoint ;
+      geo:lat ?shape_pt_lat_lt ;
+      geo:long ?shape_pt_lon_lt ;
+      gtfs:pointSequence ?shape_pt_sequence ;
+      gtfs:distanceTraveled ?shape_dist_traveled
+	 .
+} WHERE {
+	# shapes, shapes_points
+	SERVICE <x-sparql-anything:location=/home/magbak/Documents/gtfs/result/datasets/csv/50/SHAPES.csv,slice=true,csv.headers=true,strategy=1> {
+		[] xyz:shape_id ?shape_id ; xyz:shape_pt_sequence ?shape_pt_sequence ; xyz:shape_pt_lat ?shape_pt_lat ; xyz:shape_pt_lon ?shape_pt_lon ; xyz:shape_dist_traveled ?shape_dist_traveled .
+		BIND ( fx:entity( "http://transport.linkeddata.es/madrid/metro/shape_point/", ?shape_id ,"-", ?shape_pt_sequence ) AS ?shape_pt_iri )
+		BIND ( xsd:double(?shape_pt_lat) AS ?shape_pt_lat_lt ) .
+		BIND ( xsd:double(?shape_pt_lon) AS ?shape_pt_lon_lt ) .
+		BIND ( fx:entity( "http://transport.linkeddata.es/madrid/metro/shape/", ?shape_id ) AS ?shape_id_iri ) .
+	}
+}
